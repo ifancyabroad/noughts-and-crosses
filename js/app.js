@@ -12,6 +12,18 @@ $(document).ready(function() {
 		'bottom-right'
 	];
 
+	// Array of winning combinations
+	const wins = [
+		['top-left', 'top-center', 'top-right'],
+		['middle-left', 'middle-center', 'middle-right'],
+		['bottom-left', 'bottom-center', 'bottom-right'],
+		['top-left', 'middle-left', 'bottom-left'],
+		['top-center', 'middle-center', 'bottom-center'],
+		['top-right', 'middle-right', 'bottom-right'],
+		['top-left', 'middle-center', 'bottom-right'],
+		['top-right', 'middle-center', 'bottom-left']
+	];
+
 	// Array of possible squares
 	const squares = [];
 
@@ -24,6 +36,14 @@ $(document).ready(function() {
 			this.active = false;
 			this.symbol;
 		}
+
+		activate() {
+			this.active = true;
+		}
+
+		setSymbol(symbol) {
+			this.symbol = symbol;
+		}
 	}
 
 	// Create a square instance from each element of the array
@@ -32,6 +52,7 @@ $(document).ready(function() {
 		squares.push(square);
 	});
 
+	// Check location of the square clicked on
 	const checkLocation = function(location) {
 		for (let square of squares) {
 			if (square.id === location) {
@@ -40,9 +61,33 @@ $(document).ready(function() {
 		}
 	}
 
+	const checkWin = function() {
+		let activeSquares = [];
+
+		squares.forEach(function(square) {
+			if (square.active === true) {
+				activeSquares.push(square.id);
+			}
+		});
+
+		if (activeSquares.length >= 3) {
+			wins.forEach(function(win) {
+				if (win.filter(function(location) {
+					return activeSquares.indexOf(location) > -1;
+				}).length >= 3) {
+					console.log('Congratulations, you win!');
+				};
+			});
+		}
+
+	}
+
 	// Event handler for clicking a square
 	$('.square').click(function(e) {
 		$(e.target).css('background-color', 'red');
-		console.log(checkLocation(e.target.id));
+		let square = checkLocation(e.target.id);
+		square.activate();
+		square.setSymbol('nought');
+		checkWin();
 	});
 });
