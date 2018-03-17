@@ -52,6 +52,14 @@ $(document).ready(function() {
 		squares.push(square);
 	});
 
+	const getActiveSquares = function() {
+		return squares.map(function(square) {
+			if (square.active === true) {
+				return square.id;
+			}
+		});
+	}
+
 	// Check location of the square clicked on
 	const checkLocation = function(location) {
 		for (let square of squares) {
@@ -62,18 +70,10 @@ $(document).ready(function() {
 	}
 
 	const checkWin = function() {
-		let activeSquares = [];
-
-		squares.forEach(function(square) {
-			if (square.active === true) {
-				activeSquares.push(square.id);
-			}
-		});
-
-		if (activeSquares.length >= 3) {
+		if (getActiveSquares().length >= 3) {
 			for (let win of wins) {
 				if (win.filter(function(location) {
-					return activeSquares.indexOf(location) > -1;
+					return getActiveSquares().indexOf(location) > -1;
 				}).length >= 3) {
 					console.log('Congratulations, you win!');
 					break;
