@@ -1,0 +1,32 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Arial, sans-serif;
+}
+
+.opponent-area {
+	height: 100px;
+	width: 400px;
+	margin: 20px auto;
+	border: 1px solid;
+}
+
+.game-area {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	height: 400px;
+	width: 400px;
+	margin: 20px auto;
+	border: 1px solid;
+}
+
+.square {
+	height: 30%;
+	width: 30%;
+	background-color: blue;
+}
