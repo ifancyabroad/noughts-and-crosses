@@ -24,9 +24,6 @@ $(document).ready(function() {
 		['top-right', 'middle-center', 'bottom-left']
 	];
 
-	// Array of possible squares
-	const squares = [];
-
 	// Class for the squares
 	class Square {
 		constructor(id) {
@@ -46,15 +43,28 @@ $(document).ready(function() {
 		}
 	}
 
+	// Array of possible squares
+	const squares = [];
+
 	// Create a square instance from each element of the array
 	locations.forEach(function(location) {
 		square = new Square(location);
 		squares.push(square);
 	});
 
+	// Find available squares to play
+	const getAvailableSquares = function() {
+		return squares.filter(function(square) {
+			if (!square.active) {
+				return square;
+			}
+		});
+	}
+
+	// Find squares that are currently active
 	const getActiveSquares = function() {
 		return squares.map(function(square) {
-			if (square.active === true) {
+			if (square.active) {
 				return square.id;
 			}
 		});
@@ -69,6 +79,7 @@ $(document).ready(function() {
 		}
 	}
 
+	// Check current game against the wins array
 	const checkWin = function() {
 		if (getActiveSquares().length >= 3) {
 			for (let win of wins) {
@@ -85,10 +96,14 @@ $(document).ready(function() {
 
 	// Event handler for clicking a square
 	$('.square').click(function(e) {
-		$(e.target).css('background-color', 'red');
 		let square = checkLocation(e.target.id);
-		square.activate();
-		square.setSymbol('nought');
-		checkWin();
+		if (square.active) {
+			console.log('Position is already played, please try again!');
+		} else {
+			$(e.target).css('background-color', 'red');
+			square.activate();
+			square.setSymbol('nought');
+			checkWin();
+		}
 	});
 });
