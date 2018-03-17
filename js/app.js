@@ -52,11 +52,38 @@ $(document).ready(function() {
 		squares.push(square);
 	});
 
+	// Default move tiers for AI
+	const moveRating = [
+		['middle-center'],
+		['top-center', 'middle-left', 'middle-right', 'bottom-center'],
+		['top-left', 'top-right', 'bottom-left', 'bottom-right']
+	];
+
+	// get AI move
+	const getAiMove = function() {
+		for (let moves of moveRating) {
+			// Check if moves in this particular tier are available
+			let m = moves.filter(function(move) {
+				return getAvailableSquares().indexOf(move) > -1;
+			});
+
+			// If 1 or more is available, do this
+			if (m.length >= 1) {
+				let location = m[Math.floor(Math.random() * (m.length - 1))];
+				let square = checkLocation(location);
+				$('#' + location).css('background-color', 'blue');
+				square.activate();
+				square.setSymbol('cross');
+				break;
+			};
+		}
+	}
+
 	// Find available squares to play
 	const getAvailableSquares = function() {
-		return squares.filter(function(square) {
+		return squares.map(function(square) {
 			if (!square.active) {
-				return square;
+				return square.id;
 			}
 		});
 	}
@@ -91,7 +118,6 @@ $(document).ready(function() {
 				};
 			}
 		}
-
 	}
 
 	// Event handler for clicking a square
@@ -104,6 +130,7 @@ $(document).ready(function() {
 			square.activate();
 			square.setSymbol('nought');
 			checkWin();
+			getAiMove();
 		}
 	});
 });
