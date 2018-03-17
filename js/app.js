@@ -71,13 +71,14 @@ $(document).ready(function() {
 		});
 
 		if (activeSquares.length >= 3) {
-			wins.forEach(function(win) {
+			for (let win of wins) {
 				if (win.filter(function(location) {
 					return activeSquares.indexOf(location) > -1;
 				}).length >= 3) {
 					console.log('Congratulations, you win!');
+					break;
 				};
-			});
+			}
 		}
 
 	}

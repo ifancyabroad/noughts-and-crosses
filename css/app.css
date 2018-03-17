@@ -15,18 +15,18 @@ body {
 }
 
 .game-area {
+	background-color: grey;
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-content: space-between;
 	flex-wrap: wrap;
 	height: 400px;
 	width: 400px;
 	margin: 20px auto;
-	border: 1px solid;
 }
 
 .square {
-	height: 30%;
-	width: 30%;
-	background-color: blue;
+	height: 32%;
+	width: 32%;
+	background-color: white;
 }
