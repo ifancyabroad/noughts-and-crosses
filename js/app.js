@@ -59,6 +59,15 @@ $(document).ready(function() {
 		['top-left', 'top-right', 'bottom-left', 'bottom-right']
 	];
 
+	// Render the move
+	const renderMove = function(square, elem) {
+		if (square.symbol === 'nought') {
+			$(elem).text('O');
+		} else {
+			$(elem).text('X');
+		}
+	}
+
 	// get AI move
 	const getAiMove = function() {
 		for (let moves of moveRating) {
@@ -71,9 +80,9 @@ $(document).ready(function() {
 			if (m.length >= 1) {
 				let location = m[Math.floor(Math.random() * (m.length - 1))];
 				let square = checkLocation(location);
-				$('#' + location).css('background-color', 'blue');
-				square.activate();
 				square.setSymbol('cross');
+				square.activate();
+				renderMove(square, '#' + location);
 				break;
 			};
 		}
@@ -126,9 +135,9 @@ $(document).ready(function() {
 		if (square.active) {
 			console.log('Position is already played, please try again!');
 		} else {
-			$(e.target).css('background-color', 'red');
-			square.activate();
 			square.setSymbol('nought');
+			square.activate();
+			renderMove(square, e.target);
 			checkWin();
 			getAiMove();
 		}
