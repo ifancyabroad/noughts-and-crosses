@@ -43,6 +43,47 @@ $(document).ready(function() {
 		}
 	}
 
+	// Default move tiers for AI
+	const moveRating = [
+		['middle-center'],
+		['top-center', 'middle-left', 'middle-right', 'bottom-center'],
+		['top-left', 'top-right', 'bottom-left', 'bottom-right']
+	];
+
+	// Robot quotes
+	const quotes = {
+		welcome: 'Welcome to the game, human',
+		win: 'I win, you lose, again.',
+		loss: 'Congratulations, you have somehow cheated to beat me.',
+		misc: [
+			'Wow, what a terrible move.',
+			'Are you sure about that? Ok...',
+			'Kill all humans...',
+			'Zzzzzzzzzz'
+		],
+		getMisc: function() {
+			return quotes.misc[Math.floor(Math.random() * (quotes.misc.length - 1))];
+		}
+	};
+
+	// Modal HTML
+	const getModal = function(playerWin) {
+		let quote = playerWin ? quotes.loss : quotes.win;
+
+		const modal = 
+		`<div class="modal">
+			<div class="popup">
+				<figure class="modal-face">
+					<img src="images/robot.png">
+				</figure>
+				<p class="end-quote">${quote}</p>
+				<button type="button" class="play">Play Again</button>
+			</div>
+		</div>`
+
+		$('body').append(modal);
+	}
+
 	// Array of possible squares
 	const squares = [];
 
@@ -54,25 +95,10 @@ $(document).ready(function() {
 		});
 	}
 
-	// Default move tiers for AI
-	const moveRating = [
-		['middle-center'],
-		['top-center', 'middle-left', 'middle-right', 'bottom-center'],
-		['top-left', 'top-right', 'bottom-left', 'bottom-right']
-	];
-
-	// Modal HTML
-	const getModal = function() {
-		const modal = 
-		`<div class="modal">
-			<div class="popup">
-				<h2>Test</h2>
-				<button type="button" class="play">Play Again</button>
-			</div>
-		</div>`
-		$('body').append(modal);
+	// Render a quote from robo
+	const renderQuote = function(quote) {
+		$('#robo-quote').text(quote);
 	}
-
 
 	// Render the move
 	const renderMove = function(square, elem) {
@@ -100,7 +126,7 @@ $(document).ready(function() {
 				square.activate();
 				renderMove(square, '#' + location);
 				if (checkWin(square.symbol)) {
-					getModal();
+					getModal(false);
 				}
 				break;
 			};
@@ -153,6 +179,7 @@ $(document).ready(function() {
 		createSquares();
 		$('.square').empty();
 		$('.modal').remove();
+		renderQuote(quotes.welcome);
 	}
 
 	// Event handler for clicking a square
@@ -165,8 +192,9 @@ $(document).ready(function() {
 			square.activate();
 			renderMove(square, e.target);
 			if (checkWin(square.symbol)) {
-				getModal();
+				getModal(true);
 			} else {
+				renderQuote(quotes.getMisc());
 				getAiMove();
 			}
 		}
@@ -177,4 +205,5 @@ $(document).ready(function() {
 
 	//Go!
 	createSquares();
+	renderQuote(quotes.welcome);
 });
