@@ -130,17 +130,15 @@ $(document).ready(function() {
 	}
 
 	// Check current game against the wins array
-	const checkWin = function() {
+	const checkWin = function(symbol) {
 		if (getActiveSquares().length >= 3) {
 			for (let win of wins) {
-				if (win.filter(function(location) {
-					return getActiveSquares().indexOf(location) > -1;
-				}).length >= 3) {
+				if ((win.filter(function(location) { return getActiveSquares().indexOf(location) > -1; }).length >= 3) 
+					&& 
+					(win.filter(function(location) { return checkLocation(location).symbol === symbol; }).length >= 3)) {
 					console.log('Congratulations, you win!');
 					return true;
 					break;
-				} else {
-					return false;
 				}
 			}
 		}
@@ -155,7 +153,7 @@ $(document).ready(function() {
 			square.setSymbol('nought');
 			square.activate();
 			renderMove(square, e.target);
-			if (checkWin()) {
+			if (checkWin(square.symbol)) {
 				getModal();
 			} else {
 				getAiMove();
