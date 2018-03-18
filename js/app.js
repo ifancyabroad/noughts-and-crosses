@@ -139,10 +139,10 @@ $(document).ready(function() {
 					console.log('Congratulations, you win!');
 					return true;
 					break;
-				};
+				} else {
+					return false;
+				}
 			}
-		} else {
-			return false;
 		}
 	}
 
