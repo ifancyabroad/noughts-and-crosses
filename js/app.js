@@ -62,9 +62,10 @@ $(document).ready(function() {
 	// Render the move
 	const renderMove = function(square, elem) {
 		if (square.symbol === 'nought') {
-			$(elem).text('O');
+			$(elem).html('<p>O</p>');
 		} else {
-			$(elem).text('X');
+			$(elem).html('<p>X</p>');
+			$(elem).children().css('color', 'red');
 		}
 	}
 
