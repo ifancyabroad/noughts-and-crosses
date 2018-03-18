@@ -47,10 +47,12 @@ $(document).ready(function() {
 	const squares = [];
 
 	// Create a square instance from each element of the array
-	locations.forEach(function(location) {
-		square = new Square(location);
-		squares.push(square);
-	});
+	const createSquares = function() {
+		locations.forEach(function(location) {
+			square = new Square(location);
+			squares.push(square);
+		});
+	}
 
 	// Default move tiers for AI
 	const moveRating = [
@@ -145,6 +147,14 @@ $(document).ready(function() {
 		}
 	}
 
+	// Reset the game
+	const reset = function() {
+		squares.splice(0);
+		createSquares();
+		$('.square').empty();
+		$('.modal').remove();
+	}
+
 	// Event handler for clicking a square
 	$('.square').click(function(e) {
 		let square = checkLocation(e.target.id);
@@ -161,4 +171,10 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	// Reset to play again
+	$('body').on('click', '.play', reset);
+
+	//Go!
+	createSquares();
 });
