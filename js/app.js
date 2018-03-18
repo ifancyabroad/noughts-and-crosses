@@ -110,8 +110,8 @@ $(document).ready(function() {
 		}
 	}
 
-	// get AI move
-	const getAiMove = function() {
+	// Get move from tier list
+	const getDefaultMove = function() {
 		for (let moves of moveRating) {
 			// Check if moves in this particular tier are available
 			let m = moves.filter(function(move) {
@@ -121,15 +121,48 @@ $(document).ready(function() {
 			// If 1 or more is available, do this
 			if (m.length >= 1) {
 				let location = m[Math.floor(Math.random() * (m.length - 1))];
-				let square = checkLocation(location);
-				square.setSymbol('cross');
-				square.activate();
-				renderMove(square, '#' + location);
-				if (checkWin(square.symbol)) {
-					getModal(false);
-				}
-				break;
+				return location;
 			};
+		}
+	}
+
+	// Get AI move
+	const getPriorityMove = function() {
+		let loc;
+		for (let win of wins) {
+			if ((win.filter(function(location) { return getActiveSquares().indexOf(location) > -1; }).length >= 2) 
+				&& 
+				((win.filter(function(location) { return checkLocation(location).symbol === 'cross'; }).length >= 2)
+				||
+				(win.filter(function(location) { return checkLocation(location).symbol === 'nought'; }).length >= 2))) {
+				win.forEach(function(location) {
+					let square = checkLocation(location);
+					if (!square.active) {
+						loc = location;
+					}
+				})
+			}
+		}
+		return loc;
+	}
+
+	// Get AI move
+	const getAiMove = function() {
+		if (getPriorityMove()) {
+			playAiMove(getPriorityMove());
+		} else {
+			playAiMove(getDefaultMove());
+		}
+	}
+
+	// Play AI move
+	const playAiMove = function(location) {
+		let square = checkLocation(location);
+		square.setSymbol('cross');
+		square.activate();
+		renderMove(square, '#' + location);
+		if (checkWin('cross')) {
+			getModal(false);
 		}
 	}
 
