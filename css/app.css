@@ -39,3 +39,28 @@ body {
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+
+/*Modal for when game is over*/
+.modal {
+	background-color: rgba(0, 0, 0, 0.4);
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.popup {
+	background-color: white;
+	margin: 10% auto;
+	padding: 20px;
+	width: 250px;
+	text-align: center;
+	animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}

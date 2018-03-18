@@ -59,6 +59,19 @@ $(document).ready(function() {
 		['top-left', 'top-right', 'bottom-left', 'bottom-right']
 	];
 
+	// Modal HTML
+	const getModal = function() {
+		const modal = 
+		`<div class="modal">
+			<div class="popup">
+				<h2>Test</h2>
+				<button type="button" class="play">Play Again</button>
+			</div>
+		</div>`
+		$('body').append(modal);
+	}
+
+
 	// Render the move
 	const renderMove = function(square, elem) {
 		if (square.symbol === 'nought') {
@@ -124,9 +137,12 @@ $(document).ready(function() {
 					return getActiveSquares().indexOf(location) > -1;
 				}).length >= 3) {
 					console.log('Congratulations, you win!');
+					return true;
 					break;
 				};
 			}
+		} else {
+			return false;
 		}
 	}
 
@@ -139,8 +155,11 @@ $(document).ready(function() {
 			square.setSymbol('nought');
 			square.activate();
 			renderMove(square, e.target);
-			checkWin();
-			getAiMove();
+			if (checkWin()) {
+				getModal();
+			} else {
+				getAiMove();
+			}
 		}
 	});
 });
