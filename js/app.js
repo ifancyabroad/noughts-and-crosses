@@ -97,6 +97,9 @@ $(document).ready(function() {
 				square.setSymbol('cross');
 				square.activate();
 				renderMove(square, '#' + location);
+				if (checkWin(square.symbol)) {
+					getModal();
+				}
 				break;
 			};
 		}
@@ -136,9 +139,7 @@ $(document).ready(function() {
 				if ((win.filter(function(location) { return getActiveSquares().indexOf(location) > -1; }).length >= 3) 
 					&& 
 					(win.filter(function(location) { return checkLocation(location).symbol === symbol; }).length >= 3)) {
-					console.log('Congratulations, you win!');
 					return true;
-					break;
 				}
 			}
 		}
