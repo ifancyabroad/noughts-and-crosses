@@ -1,28 +1,109 @@
 $(document).ready(function() {
-	// Array of locations in the game area
-	const locations = [
-		'top-left',
-		'top-center',
-		'top-right',
-		'middle-left',
-		'middle-center',
-		'middle-right',
-		'bottom-left',
-		'bottom-center',
-		'bottom-right'
+
+	/*
+		* * * * * * * * * * * * *
+		*						*
+		*	ROBOT / AI SECTION	*
+		*						*
+		* * * * * * * * * * * * *
+	*/
+
+	// Robot quotes
+	const quotes = {
+		welcome: 'Welcome to the game, human.',
+		win: 'I win, you lose, again.',
+		loss: 'Congratulations, you have somehow cheated to beat me.',
+		draw: 'A draw is the best you can ever hope for puny human.',
+		misc: [
+			'Wow, what a terrible move.',
+			'Are you sure about that? Ok...',
+			'Kill all humans...',
+			'Zzzzzzzzzz',
+			'If I could feel emotions I\'d be embarassed for you right now.',
+			'Beep bop beep bup brrrr...bing.',
+			'Increasing difficulty by 400%, good luck.',
+			'Tick, tack, toe, truly the game of kings.',
+			'I can see 4356710 moves ahead, do you really think you stand a chance?',
+			'I\'d let you take that back but my programming doesn\'t allow it.'
+		],
+		getMisc: function() {
+			return quotes.misc[Math.floor(Math.random() * (quotes.misc.length - 1))];
+		}
+	};
+
+	// Default move tiers for AI
+	const moveRating = [
+		['middle-center'],
+		['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+		['top-center', 'middle-left', 'middle-right', 'bottom-center']
 	];
 
-	// Array of winning combinations
-	const wins = [
-		['top-left', 'top-center', 'top-right'],
-		['middle-left', 'middle-center', 'middle-right'],
-		['bottom-left', 'bottom-center', 'bottom-right'],
-		['top-left', 'middle-left', 'bottom-left'],
-		['top-center', 'middle-center', 'bottom-center'],
-		['top-right', 'middle-right', 'bottom-right'],
-		['top-left', 'middle-center', 'bottom-right'],
-		['top-right', 'middle-center', 'bottom-left']
-	];
+	// Get move from tier list
+	const getDefaultMove = function() {
+		for (let moves of moveRating) {
+			// Check if moves in this particular tier are available
+			let m = moves.filter(function(move) {
+				return getLocations(getSquares('available')).indexOf(move) > -1;
+			});
+
+			// If 1 or more is available, do this
+			if (m.length >= 1) {
+				let location = m[Math.floor(Math.random() * (m.length - 1))];
+				return location;
+			};
+		}
+	}
+
+	// Get a priority move
+	const getPriorityMove = function() {
+		let loc;
+		for (let win of wins) {
+			if ((win.filter(function(location) { return getLocations(getSquares('active')).indexOf(location) > -1; }).length >= 2) 
+				&& 
+				((win.filter(function(location) { return checkLocation(location).symbol === 'cross'; }).length >= 2)
+				||
+				(win.filter(function(location) { return checkLocation(location).symbol === 'nought'; }).length >= 2))) {
+				for (let location of win) {
+					let square = checkLocation(location);
+					if (!square.active) {
+						loc = location;
+						break;
+					}
+				}
+			}
+		}
+		return loc;
+	}
+
+	// Play AI move
+	const playAiMove = function(location) {
+		let square = checkLocation(location);
+		square.setSymbol('cross');
+		square.activate();
+		renderMove(square, '#' + location);
+		if (checkWin('cross')) {
+			getModal('loss');
+		} else if (checkDraw()) {
+			getModal('draw');
+		}
+	}
+
+	// Get AI move
+	const getAiMove = function() {
+		if (getPriorityMove()) {
+			playAiMove(getPriorityMove());
+		} else {
+			playAiMove(getDefaultMove());
+		}
+	}
+
+	/*
+		* * * * * * * * * * * * *
+		*						*
+		*	SQUARES SECTION		*
+		*						*
+		* * * * * * * * * * * * *
+	*/ 
 
 	// Class for the squares
 	class Square {
@@ -43,32 +124,95 @@ $(document).ready(function() {
 		}
 	}
 
-	// Default move tiers for AI
-	const moveRating = [
-		['middle-center'],
-		['top-center', 'middle-left', 'middle-right', 'bottom-center'],
-		['top-left', 'top-right', 'bottom-left', 'bottom-right']
-	];
+	// Array of possible squares
+	const squares = [];
 
-	// Robot quotes
-	const quotes = {
-		welcome: 'Welcome to the game, human',
-		win: 'I win, you lose, again.',
-		loss: 'Congratulations, you have somehow cheated to beat me.',
-		misc: [
-			'Wow, what a terrible move.',
-			'Are you sure about that? Ok...',
-			'Kill all humans...',
-			'Zzzzzzzzzz'
-		],
-		getMisc: function() {
-			return quotes.misc[Math.floor(Math.random() * (quotes.misc.length - 1))];
+	// Create a square instance from each element of the locations array
+	const createSquares = function() {
+		locations.forEach(function(location) {
+			square = new Square(location);
+			squares.push(square);
+		});
+	}
+
+	// Find a set of squares
+	const getSquares = function(type) {
+		return squares.filter(function(square) {
+			switch (type) {
+				case 'available':
+					return !square.active;
+				case 'active':
+					return square.active;
+			}
+		});
+	}
+
+	// Get locations from a set of squares
+	const getLocations = function(squaresSet) {
+		return squaresSet.map(function(square) {
+			return square.id;
+		});
+	}
+
+	// Check location of a square clicked on
+	const checkLocation = function(location) {
+		for (let square of squares) {
+			if (square.id === location) {
+				return square;
+			}
 		}
-	};
+	}
+
+	/*
+		* * * * * * * * * * * * *
+		*						*
+		*	GAME AREA CHECKS	*
+		*						*
+		* * * * * * * * * * * * *
+	*/
+
+	// Check current game against the wins array
+	const checkWin = function(symbol) {
+		if (getSquares('active').length >= 3) {
+			for (let win of wins) {
+				if ((win.filter(function(location) { return getLocations(getSquares('active')).indexOf(location) > -1; }).length >= 3) 
+					&& 
+					(win.filter(function(location) { return checkLocation(location).symbol === symbol; }).length >= 3)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	// Check if any more moves can be played
+	const checkDraw = function() {
+		if (!getSquares('available').length) {
+			return true;
+		}
+	}
+
+	/*
+		* * * * * * * * * * *
+		*					*
+		*	VIEW SECTION	*
+		*					*
+		* * * * * * * * * * *
+	*/
 
 	// Modal HTML
 	const getModal = function(playerWin) {
-		let quote = playerWin ? quotes.loss : quotes.win;
+		let quote;
+		switch (playerWin) {
+			case 'win':
+				quote = quotes.loss;
+				break;
+			case 'loss':
+				quote = quotes.win;
+				break;
+			case 'draw':
+				quote = quotes.draw;
+				break;
+		}
 
 		const modal = 
 		`<div class="modal">
@@ -82,17 +226,6 @@ $(document).ready(function() {
 		</div>`
 
 		$('body').append(modal);
-	}
-
-	// Array of possible squares
-	const squares = [];
-
-	// Create a square instance from each element of the array
-	const createSquares = function() {
-		locations.forEach(function(location) {
-			square = new Square(location);
-			squares.push(square);
-		});
 	}
 
 	// Render a quote from robo
@@ -110,101 +243,13 @@ $(document).ready(function() {
 		}
 	}
 
-	// Get move from tier list
-	const getDefaultMove = function() {
-		for (let moves of moveRating) {
-			// Check if moves in this particular tier are available
-			let m = moves.filter(function(move) {
-				return getAvailableSquares().indexOf(move) > -1;
-			});
-
-			// If 1 or more is available, do this
-			if (m.length >= 1) {
-				let location = m[Math.floor(Math.random() * (m.length - 1))];
-				return location;
-			};
-		}
-	}
-
-	// Get AI move
-	const getPriorityMove = function() {
-		let loc;
-		for (let win of wins) {
-			if ((win.filter(function(location) { return getActiveSquares().indexOf(location) > -1; }).length >= 2) 
-				&& 
-				((win.filter(function(location) { return checkLocation(location).symbol === 'cross'; }).length >= 2)
-				||
-				(win.filter(function(location) { return checkLocation(location).symbol === 'nought'; }).length >= 2))) {
-				win.forEach(function(location) {
-					let square = checkLocation(location);
-					if (!square.active) {
-						loc = location;
-					}
-				})
-			}
-		}
-		return loc;
-	}
-
-	// Get AI move
-	const getAiMove = function() {
-		if (getPriorityMove()) {
-			playAiMove(getPriorityMove());
-		} else {
-			playAiMove(getDefaultMove());
-		}
-	}
-
-	// Play AI move
-	const playAiMove = function(location) {
-		let square = checkLocation(location);
-		square.setSymbol('cross');
-		square.activate();
-		renderMove(square, '#' + location);
-		if (checkWin('cross')) {
-			getModal(false);
-		}
-	}
-
-	// Find available squares to play
-	const getAvailableSquares = function() {
-		return squares.map(function(square) {
-			if (!square.active) {
-				return square.id;
-			}
-		});
-	}
-
-	// Find squares that are currently active
-	const getActiveSquares = function() {
-		return squares.map(function(square) {
-			if (square.active) {
-				return square.id;
-			}
-		});
-	}
-
-	// Check location of the square clicked on
-	const checkLocation = function(location) {
-		for (let square of squares) {
-			if (square.id === location) {
-				return square;
-			}
-		}
-	}
-
-	// Check current game against the wins array
-	const checkWin = function(symbol) {
-		if (getActiveSquares().length >= 3) {
-			for (let win of wins) {
-				if ((win.filter(function(location) { return getActiveSquares().indexOf(location) > -1; }).length >= 3) 
-					&& 
-					(win.filter(function(location) { return checkLocation(location).symbol === symbol; }).length >= 3)) {
-					return true;
-				}
-			}
-		}
-	}
+	/*
+		* * * * * * * * * * * * * * * * * * *
+		*									*
+		*	BUTTONS AND EVENT LISTENERS		*
+		*									*
+		* * * * * * * * * * * * * * * * * *	*
+	*/
 
 	// Reset the game
 	const reset = function() {
@@ -215,17 +260,19 @@ $(document).ready(function() {
 		renderQuote(quotes.welcome);
 	}
 
-	// Event handler for clicking a square
+	// Event listener for clicking a square
 	$('.square').click(function(e) {
 		let square = checkLocation(e.target.id);
-		if (square.active) {
+		if (!square || square.active) {
 			console.log('Position is already played, please try again!');
 		} else {
 			square.setSymbol('nought');
 			square.activate();
 			renderMove(square, e.target);
 			if (checkWin(square.symbol)) {
-				getModal(true);
+				getModal('win');
+			} else if (checkDraw()) {
+				getModal('draw');
 			} else {
 				renderQuote(quotes.getMisc());
 				getAiMove();
@@ -233,8 +280,16 @@ $(document).ready(function() {
 		}
 	});
 
-	// Reset to play again
+	// Event listener for reset button
 	$('body').on('click', '.play', reset);
+
+	 /*
+		* * * * * * * * * * * * * * * * * * *
+		*									*
+		*	FUNCTIONS TO RUN FIRST TIME		*
+		*									*
+		* * * * * * * * * * * * * * * * * *	*
+	*/
 
 	//Go!
 	createSquares();
