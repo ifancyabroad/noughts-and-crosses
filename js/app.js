@@ -282,9 +282,22 @@ $(document).ready(function() {
 		$('body').append(modal);
 	}
 
+	// Type count and reset method for typing animation
+	let typeCount = 0
+
+	const resetTypeCount = function() {
+		typeCount = 0;
+		$('#robo-quote').text('');
+	}
+
 	// Render a quote from the AI
 	const renderQuote = function(quote) {
-		$('#robo-quote').text(quote);
+		// Animation for typing
+		if (typeCount < quote.length) {
+			$('#robo-quote').text($('#robo-quote').text() + quote.charAt(typeCount));
+			typeCount++;
+			setTimeout(renderQuote, 50, quote);
+		}
 	}
 
 	// Render the move
@@ -323,6 +336,7 @@ $(document).ready(function() {
 		});
 
 		// Render the welcome quote
+		resetTypeCount();
 		renderQuote(quotes.welcome);
 	}
 
@@ -352,6 +366,7 @@ $(document).ready(function() {
 				getModal('draw');
 			} else {
 				// Render a new AI quote and get the AI response if the game is not over
+				resetTypeCount();
 				renderQuote(quotes.getMisc());
 				getAiMove();
 			}
