@@ -342,9 +342,6 @@ $(document).ready(function() {
 
 	// Play the selected square
 	const playSquare = function(e) {
-		// Remove event listeners from the game area until AI has moved
-		$('.square').off();
-
 		// Find the square that was played
 		let square = checkLocation(e.target.id);
 
@@ -352,6 +349,9 @@ $(document).ready(function() {
 		if (!square || square.active) {
 			console.log('Position is already played, please try again!');
 		} else {
+			// Remove event listeners from the game area until AI has moved
+			$('.square').off();
+			
 			// Set the square symbol and activate
 			square.setSymbol('nought');
 			square.activate();
