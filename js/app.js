@@ -98,6 +98,11 @@ $(document).ready(function() {
 		return loc;
 	}
 
+	// Get a random number in a range
+	const getRandom = function(a, b) {
+		return Math.floor(Math.random() * b) + a;
+	}
+
 	// Play AI move
 	const playAiMove = function(location) {
 		let square = checkLocation(location);
@@ -112,14 +117,14 @@ $(document).ready(function() {
 			$('.square').click(function(e) { 
 				playSquare(e);
 			});
-		}, 500);
 
-		// Check if the game is won or drawn
-		if (checkWin('cross')) {
-			getModal('loss');
-		} else if (checkDraw()) {
-			getModal('draw');
-		}
+			// Check if the game is won or drawn
+			if (checkWin('cross')) {
+				getModal('loss');
+			} else if (checkDraw()) {
+				getModal('draw');
+			}
+		}, getRandom(200, 600));
 	}
 
 	// Get AI move
