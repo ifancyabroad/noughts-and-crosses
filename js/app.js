@@ -285,9 +285,19 @@ $(document).ready(function() {
 	// Type count and reset method for typing animation
 	let typeCount = 0
 
-	const resetTypeCount = function() {
+	const resetQuote = function() {
 		typeCount = 0;
 		$('#robo-quote').text('');
+	}
+
+	// Stop a quote
+	const stopQuote = function() {
+		clearTimeout(typeQuote);
+	}
+
+	// Start a quote
+	const startQuote = function(quote) {
+		typeQuote = setTimeout(renderQuote, 50, quote);
 	}
 
 	// Render a quote from the AI
@@ -296,7 +306,7 @@ $(document).ready(function() {
 		if (typeCount < quote.length) {
 			$('#robo-quote').text($('#robo-quote').text() + quote.charAt(typeCount));
 			typeCount++;
-			setTimeout(renderQuote, 50, quote);
+			startQuote(quote);
 		}
 	}
 
@@ -336,8 +346,9 @@ $(document).ready(function() {
 		});
 
 		// Render the welcome quote
-		resetTypeCount();
-		renderQuote(quotes.welcome);
+		stopQuote();
+		resetQuote();
+		startQuote(quotes.welcome);
 	}
 
 	// Play the selected square
@@ -351,7 +362,7 @@ $(document).ready(function() {
 		} else {
 			// Remove event listeners from the game area until AI has moved
 			$('.square').off();
-			
+
 			// Set the square symbol and activate
 			square.setSymbol('nought');
 			square.activate();
@@ -366,8 +377,9 @@ $(document).ready(function() {
 				getModal('draw');
 			} else {
 				// Render a new AI quote and get the AI response if the game is not over
-				resetTypeCount();
-				renderQuote(quotes.getMisc());
+				stopQuote();
+				resetQuote();
+				startQuote(quotes.getMisc());
 				getAiMove();
 			}
 		}
@@ -391,5 +403,5 @@ $(document).ready(function() {
 
 	//Go!
 	createSquares();
-	renderQuote(quotes.welcome);
+	startQuote(quotes.welcome);
 });
