@@ -4,7 +4,7 @@
 }
 
 body {
-	background-color: #a456ce;
+	background-color: #efe3ff;
 	font-family: Arial, sans-serif;
 }
 
@@ -28,6 +28,7 @@ body {
 	position: relative;
 	height: 80px;
 	width: 70%;
+	padding: 0 10px;
 	border: 2px solid;
 	border-radius: 20px;
 }
@@ -37,7 +38,6 @@ body {
 	font-size: 1.4em;
 	position: absolute;
 	top: 50%;
-	left: 5%;
 	transform: translateY(-50%);
 }
 
@@ -56,7 +56,7 @@ body {
 	position: relative;
 	height: 32%;
 	width: 32%;
-	background-color: #e0ebff;
+	background-color: #efe3ff;
 }
 
 .square p {
