@@ -1,0 +1,24 @@
+{
+  "name": "noughts-and-crosses",
+  "version": "1.0.0",
+  "description": "A noughts and crosses web app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ifancyabroad/noughts-and-crosses.git"
+  },
+  "author": "Edgar Nightingale",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ifancyabroad/noughts-and-crosses/issues"
+  },
+  "homepage": "https://github.com/ifancyabroad/noughts-and-crosses#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  }
+}
