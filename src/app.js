@@ -173,7 +173,7 @@ $(document).ready(function() {
 	// Create a square instance from each element of the locations array
 	const createSquares = function() {
 		locations.forEach(function(location) {
-			square = new Square(location);
+			let square = new Square(location);
 			squares.push(square);
 		});
 	}
@@ -290,6 +290,9 @@ $(document).ready(function() {
 		typeCount = 0;
 		$('#robo-quote').text('');
 	}
+
+	// Variable for typing animation
+	let typeQuote;
 
 	// Stop a quote
 	const stopQuote = function() {
