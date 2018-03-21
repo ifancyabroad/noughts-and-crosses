@@ -274,7 +274,8 @@ $(document).ready(function() {
 					<img src="images/robot.png">
 				</figure>
 				<p class="end-quote">${quote}</p>
-				<button type="button" class="play">Play Again</button>
+				<button type="button" class="play" id="go-first">Go First</button>
+				<button type="button" class="play" id="go-second">Go Second</button>
 			</div>
 		</div>`
 
@@ -390,8 +391,13 @@ $(document).ready(function() {
 		playSquare(e);
 	});
 
-	// Event listener for reset button
-	$('body').on('click', '.play', reset);
+	// Event listener for playing again buttons
+	$('body').on('click', '#go-first', reset);
+	$('body').on('click', '#go-second', function() {
+		reset();
+		$('.square').off();
+		getAiMove();
+	});
 
 	 /*
 		* * * * * * * * * * * * * * * * * * *
